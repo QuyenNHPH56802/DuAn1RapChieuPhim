@@ -130,7 +130,8 @@ Font arialFont = new Font("Arial", Font.PLAIN, 14);
 
     }
 public void searchAndFillTable(String searchQuery) {
-    ArrayList<ModelListFilm> searchResults = rp.timMa(searchQuery); // Giả sử `rp` có phương thức `searchById`
+    ArrayList<ModelListFilm> searchResults = rp.timMa(searchQuery);
+   // Giả sử `rp` có phương thức `searchById`
 
     if (searchResults.isEmpty()) {
         JOptionPane.showMessageDialog(this, "Không tìm thấy học sinh với mã: " + searchQuery);
@@ -437,15 +438,16 @@ public void searchAndFillTable(String searchQuery) {
     }//GEN-LAST:event_tbl_StudentsMouseClicked
 
     private void btn_searchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_searchActionPerformed
-        String id = txt_search.getText().toLowerCase();
-        if (rp.timMa(id).isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Vui lòng nhập tên phim để tìm kiếm!");
-            fillTable(rp.getAll());
-        }else{
-            JOptionPane.showMessageDialog(null, "Tim Thay Phim");
-            fillTable(rp.timMa(id));
-        }
+String id = txt_search.getText().toLowerCase();
+ArrayList<ModelListFilm> searchResults = rp.timMa(id);
 
+if (searchResults.isEmpty()) {
+    JOptionPane.showMessageDialog(this, "Không tìm thấy phim nào!");
+    fillTable(rp.getAll());
+} else {
+    JOptionPane.showMessageDialog(null, "Tìm thấy phim!");
+    fillTable(searchResults);
+}
 
     }//GEN-LAST:event_btn_searchActionPerformed
 

@@ -13,6 +13,7 @@ import java.util.ArrayList;
  */
 public class Responsitory_Students {
    private String sql = null;
+   
     public  ArrayList<ModelListFilm> getAll(){
         ArrayList<ModelListFilm> list_students = new ArrayList<>();
         sql = """
@@ -35,29 +36,38 @@ public class Responsitory_Students {
         }
         return list_students;
     }
-    public  ArrayList<ModelListFilm> timMa( String id){
-        ArrayList<ModelListFilm> list_students = new ArrayList<>();
-        sql = """
-              SELECT [id]
-                     ,[name]
-                     ,[duration]
-                     ,[director]
-                     ,[description]
-                 FROM [dbo].[tbl_movie] where name like ?
-              """;
-        try (Connection con = DBConnect.getConnection(); PreparedStatement ps = con.prepareCall(sql)){
-            ps.setObject(1, "%" +id + "%");
-            ResultSet rs = ps.executeQuery();
-            while(rs.next()){
-                ModelListFilm st = new ModelListFilm(rs.getInt(1), rs.getString(2), rs.getInt(3), rs.getString(4),rs.getString(5));
-                list_students.add(st);
-            }
-            
-        } catch (Exception e) {
-            e.printStackTrace();
+    public ArrayList<ModelListFilm> timMa(String query) {
+    ArrayList<ModelListFilm> listFilms = new ArrayList<>();
+    // Câu truy vấn tìm kiếm theo ID, tên hoặc mô tả
+    sql = """
+          SELECT [id]
+                 ,[name]
+                 ,[duration]
+                 ,[director]
+                 ,[description]
+          FROM [dbo].[tbl_movie]
+          WHERE name LIKE ? OR id LIKE ? OR description LIKE ?
+          """;
+
+    try (Connection con = DBConnect.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
+        
+        String searchParam = "%" + query + "%";
+        ps.setString(1, searchParam); 
+        ps.setString(2, searchParam); 
+        ps.setString(3, searchParam); 
+        ps.setString(4, searchParam);
+
+        ResultSet rs = ps.executeQuery();
+        while (rs.next()) {
+            ModelListFilm film = new ModelListFilm(rs.getInt(1), rs.getString(2), rs.getInt(3), rs.getString(4), rs.getString(5));
+            listFilms.add(film);
         }
-        return list_students;
+        
+    } catch (Exception e) {
+        e.printStackTrace();
     }
+    return listFilms;
+}
     public int update(String id , ModelListFilm st){
         sql = """
               update Phim set name =?, duration= ?, director = ?,description =? where name = ?
